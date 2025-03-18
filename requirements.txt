@@ -6,9 +6,8 @@ djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 drf-yasg==1.21.7
 gunicorn==22.0.0
-kombu==5.3.5
-psycopg2==2.9.9
-psycopg2-binary==2.9.10
+kombu==5.3.6
+psycopg2-binary==2.9.9
 pytest==8.1.1
 redis==5.0.3
 requests==2.31.0
