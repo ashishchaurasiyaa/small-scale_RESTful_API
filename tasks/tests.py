@@ -1,10 +1,12 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
 from tasks.models import Task
 from django.core.cache import cache
 from django.utils.timezone import now
+from django.urls import reverse
+from unittest.mock import patch
 
 """
 Unit tests for the Task Management API.
@@ -136,3 +138,24 @@ class RateLimitTestCase(TestCase):
         # 6th request should be rate-limited
         response = self.client.get('/api/tasks/')
         self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)  # 429 Too Many Requests
+
+class TaskRateLimitTest(APITestCase):
+
+    @patch('myapp.views.cache.set')
+    def test_create_task_rate_limit(self, mock_cache):
+        # Simulate that a user has exceeded the rate limit
+        mock_cache.return_value = None
+
+        # Assuming that the endpoint for task creation is `task-create`
+        url = reverse('task-create')
+        data = {
+            'title': 'Test Task',
+            'description': 'Test Description',
+            'status': 'pending'
+        }
+
+        # Simulate rate-limiting by sending a request that exceeds the rate limit
+        response = self.client.post(url, data, format='json')
+
+        # Check that the response is rate-limited
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)

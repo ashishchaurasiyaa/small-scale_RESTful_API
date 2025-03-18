@@ -121,9 +121,11 @@ USE_I18N = True
 
 USE_TZ = True
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS settings (set via environment variable)
+CORS_ALLOW_ALL_ORIGINS = config("CORS_ALLOW_ALL_ORIGINS", default="False") == "True"
+CORS_ALLOW_CREDENTIALS = True
 
-# REST Framework Settings
+# REST Framework Settings, including JWT and rate throttling
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -139,9 +141,6 @@ REST_FRAMEWORK = {
     },
 }
 
-# AWS Lambda Simulation Settings (Mimics AWS Lambda Integration)
-AWS_LAMBDA_SIMULATION = os.getenv("AWS_LAMBDA_SIMULATION", "True") == "True"
-
 # JWT settings
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
@@ -149,7 +148,7 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
 }
 
-# CACHING (Redis)
+# Caching (Redis)
 REDIS_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/1")
 CACHES = {
     "default": {
@@ -158,13 +157,14 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SOCKET_TIMEOUT": 5,
-            "IGNORE_EXCEPTIONS": True,  # Avoids crashes if Redis is down
+            "IGNORE_EXCEPTIONS": True,  # Avoid crashes if Redis is down
         },
     }
 }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+DJANGO_RATELIMIT_CACHE = "default"
 
 
 
@@ -175,7 +175,7 @@ DJANGO_RATELIMIT_CACHE = "default"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-# Static and media files settings
+# Static and media files
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -203,12 +203,6 @@ LOGGING = {
         },
     },
 }
-
-
-# SECURITY HEADERS
-CORS_ALLOW_ALL_ORIGINS = config("CORS_ALLOW_ALL_ORIGINS", default="False") == "True"
-CORS_ALLOW_CREDENTIALS = True  # Allows authentication cookies
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
