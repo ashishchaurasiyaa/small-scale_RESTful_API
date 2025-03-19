@@ -12,19 +12,19 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-from decouple import config
+from dotenv import load_dotenv
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY", default="django-insecure-yh*g=#!&8&wo)#2rwyznvus-0)qq$vbb592e5d!vd6hf%=+h5z")
+SECRET_KEY = os.getenv("SECRET_KEY", default="django-insecure-yh*g=#!&8&wo)#2rwyznvus-0)qq$vbb592e5d!vd6hf%=+h5z")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=True, cast=bool)  # Changed to use config() for consistency
+DEBUG = os.getenv("DEBUG", default=True, cast=bool)  # Changed to use config() for consistency
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(",")
 
 # Application definition
 
@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'task_manager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config("DB_NAME"),
-        'USER': config("DB_USER"),
-        'PASSWORD': config("DB_PASSWORD"),
-        'HOST': config("DB_HOST", default="localhost"),
-        'PORT': config("DB_PORT", default="5432"),
+        'NAME': os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': os.getenv("DB_HOST", default="localhost"),
+        'PORT': os.getenv("DB_PORT", default="5432"),
     }
 }
 
@@ -114,7 +114,7 @@ USE_I18N = True
 USE_TZ = True
 
 # CORS settings (set via environment variable)
-CORS_ALLOW_ALL_ORIGINS = config("CORS_ALLOW_ALL_ORIGINS", default="False") == "True"
+CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", default="False") == "True"
 CORS_ALLOW_CREDENTIALS = True
 
 # REST Framework Settings, including JWT and rate throttling
@@ -136,7 +136,7 @@ SIMPLE_JWT = {
 }
 
 # Caching (Redis)
-REDIS_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/1")
+REDIS_URL = os.getenv("REDIS_URL", default="redis://127.0.0.1:6379/1")
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
